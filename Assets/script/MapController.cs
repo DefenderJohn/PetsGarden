@@ -2,22 +2,28 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = System.Random;
 
 public class MapController : MonoBehaviour
 {
     public GameObject specialBlock;
     public GameObject regularBlock;
+    public GameObject jar;
     public float length;
     public float width;
+    public float height;
     public Dictionary<Vector2Int, GameObject> blockDict;
+    public Dictionary<Vector2Int, GameObject> decorationDict;
     public HashSet<Vector2Int> edgeEmptySet;
 
     // Start is called before the first frame update
     void Start()
     {
         length = specialBlock.GetComponent<BoxCollider>().size.x;
+        height = specialBlock.GetComponent<BoxCollider>().size.y;
         width = specialBlock.GetComponent<BoxCollider>().size.z;
         this.blockDict = new Dictionary<Vector2Int, GameObject>();
+        this.decorationDict = new Dictionary<Vector2Int, GameObject>();
         this.edgeEmptySet = new HashSet<Vector2Int>();
         initialize();
     }
@@ -26,7 +32,13 @@ public class MapController : MonoBehaviour
     void Update()
     {
 
+        
     }
+
+    public void addDecoration(Vector2Int position, GameObject decoration) { 
+        this.decorationDict.Add(position, Instantiate(decoration, new Vector3(position.x, 0.0f, position.y), Quaternion.identity));
+    } 
+
     private void initialize()
     {
         for (int xPos = -1; xPos <= 1; xPos++)
@@ -36,6 +48,7 @@ public class MapController : MonoBehaviour
                 addBlock(new Vector2Int(xPos, yPos));
             }
         }
+        addDecoration(new Vector2Int(0, 0), this.jar);
     }
 
     private void addBlock(Vector2Int pos)
