@@ -27,15 +27,7 @@ public class MapController : MonoBehaviour
     {
 
     }
-
-    public void addBlock(Vector2Int pos)
-    {
-        this.edgeEmptySet.Remove(pos);
-        this.blockDict.Add(pos, Instantiate(regularBlock, new Vector3(pos.x, 0.0f, pos.y), Quaternion.identity));
-        addEdgeToEmptyList(pos);
-    }
-
-    public void initialize()
+    private void initialize()
     {
         for (int xPos = -1; xPos <= 1; xPos++)
         {
@@ -46,7 +38,15 @@ public class MapController : MonoBehaviour
         }
     }
 
-    public void addEdgeToEmptyList(Vector2Int target)
+    private void addBlock(Vector2Int pos)
+    {
+        this.edgeEmptySet.Remove(pos);
+        this.blockDict.Add(pos, Instantiate(regularBlock, new Vector3(pos.x, 0.0f, pos.y), Quaternion.identity));
+        addEdgeToEmptyList(pos);
+    }
+
+
+    private void addEdgeToEmptyList(Vector2Int target)
     {
         List<Vector2Int> surrondings = new List<Vector2Int>() {
             target + new Vector2Int(0, 1),
