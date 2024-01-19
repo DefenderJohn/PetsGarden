@@ -19,9 +19,9 @@ public class MapController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        length = specialBlock.GetComponent<BoxCollider>().size.x;
-        height = specialBlock.GetComponent<BoxCollider>().size.y;
-        width = specialBlock.GetComponent<BoxCollider>().size.z;
+        length = specialBlock.GetComponent<Renderer>().bounds.size.x;
+        height = specialBlock.GetComponent<Renderer>().bounds.size.y;
+        width = specialBlock.GetComponent<Renderer>().bounds.size.z;
         this.blockDict = new Dictionary<Vector2Int, GameObject>();
         this.decorationDict = new Dictionary<Vector2Int, GameObject>();
         this.edgeEmptySet = new HashSet<Vector2Int>();
@@ -36,7 +36,7 @@ public class MapController : MonoBehaviour
     }
 
     public void addDecoration(Vector2Int position, GameObject decoration) { 
-        this.decorationDict.Add(position, Instantiate(decoration, new Vector3(position.x, 0.0f, position.y), Quaternion.identity));
+        this.decorationDict.Add(position, Instantiate(decoration, new Vector3(position.x, height/2 + decoration.GetComponent<Renderer>().bounds.size.y/2, position.y), Quaternion.identity));
     } 
 
     private void initialize()

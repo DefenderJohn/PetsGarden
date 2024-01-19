@@ -46,5 +46,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   specialBlock: {fileID: 3787361409795691218, guid: 5c0f94fac9ff6ea4c8fb32314beff9d8, type: 3}
   regularBlock: {fileID: 3787361409795691218, guid: e0b354079216f3e4199ddad5d978f527, type: 3}
+  jar: {fileID: 1627240677792336571, guid: bfb09ca701e067944a5019a2b52b916c, type: 3}
   length: 0
   width: 0
+  height: 0
