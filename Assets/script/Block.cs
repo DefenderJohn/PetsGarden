@@ -17,8 +17,8 @@ public class Block : MonoBehaviour
         
     }
 
-    public void generateCoin(float initialPos) {
-        this.coin.GetComponent<CoinController>().randomInitialPosition = initialPos;
+    public void generateCoin(float initialPos, Vector2Int index) {
         this.coin.SetActive(true);
+        this.coin.GetComponent<CoinController>().initialize(initialPos, index);
     }
 }

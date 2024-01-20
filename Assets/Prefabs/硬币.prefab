@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 7646010471177631018}
   m_Layer: 0
   m_Name: "\u786C\u5E01"
-  m_TagString: Untagged
+  m_TagString: Coin
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -115,6 +115,14 @@ MonoBehaviour:
   waveRange: 0.1
   originalHeight: 0
   randomInitialPosition: 0
+  pickDuration: 2
+  timer: 0
+  flyHeight: 2
+  destination: {x: 0, y: 0, z: 0}
+  controlPoint: {x: 0, y: 0, z: 0}
+  currentPosition: {x: 0, y: 0, z: 0}
+  destinationObject: {fileID: 0}
+  isPicked: 0
 --- !u!54 &7646010471177631018
 Rigidbody:
   m_ObjectHideFlags: 0

@@ -51,7 +51,7 @@ MonoBehaviour:
   length: 0
   width: 0
   height: 0
-  delayTime: 20
+  delayTime: 2
   mainCamera: {fileID: 0}
 --- !u!114 &8428994890557583139
 MonoBehaviour:

@@ -41,6 +41,11 @@ public class MapController : MonoBehaviour
 
     }
 
+    private void OnDestroy()
+    {
+        MapController.OnPickedUp -= handleFinishPickup;
+    }
+
     public void addDecoration(Vector2Int position, GameObject decoration, float additionalLift)
     {
         this.decorationDict.Add(position, Instantiate(decoration, new Vector3(position.x, height / 2 + decoration.GetComponent<Renderer>().bounds.size.y / 2 + additionalLift, position.y), Quaternion.identity));
@@ -52,17 +57,33 @@ public class MapController : MonoBehaviour
         {
             for (int yPos = -1; yPos <= 1; yPos++)
             {
-                addBlock(new Vector2Int(xPos, yPos));
+                addBlock(new Vector2Int(xPos, yPos), this.regularBlock);
             }
         }
         addDecoration(new Vector2Int(0, 0), this.jar, 0.0f);
         StartCoroutine(this.generateCoins(delayTime));
+        MapController.OnPickedUp += handleFinishPickup;
     }
 
-    private void addBlock(Vector2Int pos)
+    private void handleFinishPickup(CoinController coin)
+    {
+        Debug.Log("picked");
+        this.coinSet.Remove(coin.index);
+        addRandomBlock();
+    }
+
+    private void addRandomBlock()
+    {
+        Vector2Int targetBlockIndex = this.edgeEmptySet.ToArray()[UnityEngine.Random.Range(0, this.edgeEmptySet.Count)];
+        this.edgeEmptySet.Remove(targetBlockIndex);
+        GameObject targetBlock = UnityEngine.Random.Range(0, 2) == 1 ? this.regularBlock : this.specialBlock;
+        addBlock(targetBlockIndex, targetBlock);
+    }
+
+    private void addBlock(Vector2Int pos, GameObject block)
     {
         this.edgeEmptySet.Remove(pos);
-        this.blockDict.Add(pos, Instantiate(regularBlock, new Vector3(pos.x, 0.0f, pos.y), Quaternion.identity));
+        this.blockDict.Add(pos, Instantiate(block, new Vector3(pos.x, 0.0f, pos.y), Quaternion.identity));
         addEdgeToEmptyList(pos);
     }
 
@@ -99,7 +120,7 @@ public class MapController : MonoBehaviour
         {
             Random random = new Random();
             Vector2Int selectBlockPos = new HashSet<Vector2Int>(this.blockDict.Keys).Except(this.coinSet).ToArray()[random.Next(0, this.blockDict.Keys.Count - this.coinSet.Count)];
-            this.blockDict[selectBlockPos].GetComponent<Block>().generateCoin((float)random.NextDouble());
+            this.blockDict[selectBlockPos].GetComponent<Block>().generateCoin((float)random.NextDouble(), selectBlockPos);
             this.coinSet.Add(selectBlockPos);
         }
     }
@@ -112,7 +133,22 @@ public class MapController : MonoBehaviour
             if (Physics.Raycast(mainCamera.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, 10000))
             {
                 GameObject hitObject = hit.rigidbody.gameObject;
+                switch (hitObject.tag)
+                {
+                    case "Coin":
+                        hitObject.GetComponent<CoinController>().pickUp(this.decorationDict[new Vector2Int(0, 0)]);
+                        break;
+                    default:
+                        break;
+                }
             }
         }
+    }
+
+    public delegate void FinishedPickedUpEventHandler(CoinController coin);
+    public static event FinishedPickedUpEventHandler OnPickedUp;
+    public static void FinishedPickedUp(CoinController coin)
+    {
+        OnPickedUp(coin);
     }
 }
