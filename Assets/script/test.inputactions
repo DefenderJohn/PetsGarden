@@ -1,0 +1,51 @@
+{
+    "name": "test",
+    "maps": [
+        {
+            "name": "Click",
+            "id": "fd8b31e3-5eb9-4808-9ec9-4c921358dd1d",
+            "actions": [
+                {
+                    "name": "Click",
+                    "type": "Button",
+                    "id": "3f9ef043-6983-4b4c-a7f9-727791beb2f1",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "361baa81-6237-4054-99e7-e2cb141a26da",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard-mouse",
+                    "action": "Click",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": [
+        {
+            "name": "Keyboard-mouse",
+            "bindingGroup": "Keyboard-mouse",
+            "devices": [
+                {
+                    "devicePath": "<Keyboard>",
+                    "isOptional": true,
+                    "isOR": false
+                },
+                {
+                    "devicePath": "<Mouse>",
+                    "isOptional": true,
+                    "isOR": false
+                }
+            ]
+        }
+    ]
+}

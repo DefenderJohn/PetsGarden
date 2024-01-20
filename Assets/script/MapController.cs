@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using Random = System.Random;
 
 public class MapController : MonoBehaviour
@@ -12,9 +14,12 @@ public class MapController : MonoBehaviour
     public float length;
     public float width;
     public float height;
+    public float delayTime = 20.0f;
     public Dictionary<Vector2Int, GameObject> blockDict;
     public Dictionary<Vector2Int, GameObject> decorationDict;
+    public HashSet<Vector2Int> coinSet;
     public HashSet<Vector2Int> edgeEmptySet;
+    public Camera mainCamera;
 
     // Start is called before the first frame update
     void Start()
@@ -25,6 +30,7 @@ public class MapController : MonoBehaviour
         this.blockDict = new Dictionary<Vector2Int, GameObject>();
         this.decorationDict = new Dictionary<Vector2Int, GameObject>();
         this.edgeEmptySet = new HashSet<Vector2Int>();
+        this.coinSet = new HashSet<Vector2Int>();
         initialize();
     }
 
@@ -32,12 +38,13 @@ public class MapController : MonoBehaviour
     void Update()
     {
 
-        
+
     }
 
-    public void addDecoration(Vector2Int position, GameObject decoration) { 
-        this.decorationDict.Add(position, Instantiate(decoration, new Vector3(position.x, height/2 + decoration.GetComponent<Renderer>().bounds.size.y/2, position.y), Quaternion.identity));
-    } 
+    public void addDecoration(Vector2Int position, GameObject decoration, float additionalLift)
+    {
+        this.decorationDict.Add(position, Instantiate(decoration, new Vector3(position.x, height / 2 + decoration.GetComponent<Renderer>().bounds.size.y / 2 + additionalLift, position.y), Quaternion.identity));
+    }
 
     private void initialize()
     {
@@ -48,7 +55,8 @@ public class MapController : MonoBehaviour
                 addBlock(new Vector2Int(xPos, yPos));
             }
         }
-        addDecoration(new Vector2Int(0, 0), this.jar);
+        addDecoration(new Vector2Int(0, 0), this.jar, 0.0f);
+        StartCoroutine(this.generateCoins(delayTime));
     }
 
     private void addBlock(Vector2Int pos)
@@ -72,6 +80,38 @@ public class MapController : MonoBehaviour
             if (!this.blockDict.ContainsKey(surronding))
             {
                 this.edgeEmptySet.Add(surronding);
+            }
+        }
+    }
+
+    private IEnumerator generateCoins(float delayTime)
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(delayTime);
+            generateCoin();
+        }
+    }
+
+    private void generateCoin()
+    {
+        if (this.blockDict.Keys.Count - this.coinSet.Count > 0)
+        {
+            Random random = new Random();
+            Vector2Int selectBlockPos = new HashSet<Vector2Int>(this.blockDict.Keys).Except(this.coinSet).ToArray()[random.Next(0, this.blockDict.Keys.Count - this.coinSet.Count)];
+            this.blockDict[selectBlockPos].GetComponent<Block>().generateCoin((float)random.NextDouble());
+            this.coinSet.Add(selectBlockPos);
+        }
+    }
+
+    public void OnMouseClick(InputAction.CallbackContext context)
+    {
+        Debug.Log("Clicked");
+        if (context.phase == InputActionPhase.Performed)
+        {
+            if (Physics.Raycast(mainCamera.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, 10000))
+            {
+                GameObject hitObject = hit.rigidbody.gameObject;
             }
         }
     }
