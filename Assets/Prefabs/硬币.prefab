@@ -117,10 +117,12 @@ MonoBehaviour:
   randomInitialPosition: 0
   pickDuration: 2
   timer: 0
-  flyHeight: 2
+  flyHeight: 6
+  index: {x: 0, y: 0}
   destination: {x: 0, y: 0, z: 0}
   controlPoint: {x: 0, y: 0, z: 0}
   currentPosition: {x: 0, y: 0, z: 0}
+  originalPos: {x: 0, y: 0, z: 0}
   destinationObject: {fileID: 0}
   isPicked: 0
 --- !u!54 &7646010471177631018

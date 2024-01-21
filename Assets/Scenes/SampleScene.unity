@@ -347,7 +347,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 1
-  rotationSpeed: 1
+  rotationSpeed: 3
   moveInput: {x: 0, y: 0}
 --- !u!1001 &1370722173
 PrefabInstance:
