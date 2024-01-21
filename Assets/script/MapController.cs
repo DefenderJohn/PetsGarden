@@ -138,6 +138,9 @@ public class MapController : MonoBehaviour
                     case "Coin":
                         hitObject.GetComponent<CoinController>().pickUp(this.decorationDict[new Vector2Int(0, 0)]);
                         break;
+                    case "Pet":
+                        hitObject.SetActive(false);
+                        break;
                     default:
                         break;
                 }
@@ -150,5 +153,9 @@ public class MapController : MonoBehaviour
     public static void FinishedPickedUp(CoinController coin)
     {
         OnPickedUp(coin);
+    }
+
+    private void checkAndGeneratePet() { 
+    
     }
 }

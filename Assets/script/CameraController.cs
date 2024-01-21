@@ -28,7 +28,6 @@ public class CameraController : MonoBehaviour
             right.Normalize();
 
             Vector3 moveDirection = (forward * moveInput.y + right * moveInput.x) * moveSpeed * Time.deltaTime;
-
             transform.position += moveDirection;
         }
     }
