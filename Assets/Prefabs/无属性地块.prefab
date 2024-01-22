@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 5991637903802233480}
   m_Layer: 0
   m_Name: "\u65E0\u5C5E\u6027\u5730\u5757"
-  m_TagString: Untagged
+  m_TagString: RegularBlock
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -113,6 +113,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   coin: {fileID: 7345774382035163577}
+  animal: {fileID: 0}
 --- !u!54 &5991637903802233480
 Rigidbody:
   m_ObjectHideFlags: 0

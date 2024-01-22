@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PetController : MonoBehaviour
 {
+    public Vector2Int index;
     // Start is called before the first frame update
     void Start()
     {

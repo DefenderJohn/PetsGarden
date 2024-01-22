@@ -2,8 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static UnityEngine.GraphicsBuffer;
 using Random = System.Random;
 
 public class MapController : MonoBehaviour
@@ -17,9 +19,10 @@ public class MapController : MonoBehaviour
     public float delayTime = 20.0f;
     public Dictionary<Vector2Int, GameObject> blockDict;
     public Dictionary<Vector2Int, GameObject> decorationDict;
-    public HashSet<Vector2Int> coinSet;
+    public HashSet<Vector2Int> occupySet;
     public HashSet<Vector2Int> edgeEmptySet;
     public Camera mainCamera;
+    public TMP_Text catchedCountText;
 
     // Start is called before the first frame update
     void Start()
@@ -30,14 +33,13 @@ public class MapController : MonoBehaviour
         this.blockDict = new Dictionary<Vector2Int, GameObject>();
         this.decorationDict = new Dictionary<Vector2Int, GameObject>();
         this.edgeEmptySet = new HashSet<Vector2Int>();
-        this.coinSet = new HashSet<Vector2Int>();
+        this.occupySet = new HashSet<Vector2Int>();
         initialize();
     }
 
     // Update is called once per frame
     void Update()
     {
-
 
     }
 
@@ -63,12 +65,13 @@ public class MapController : MonoBehaviour
         addDecoration(new Vector2Int(0, 0), this.jar, 0.0f);
         StartCoroutine(this.generateCoins(delayTime));
         MapController.OnPickedUp += handleFinishPickup;
+        checkAndGeneratePet();
     }
 
     private void handleFinishPickup(CoinController coin)
     {
         Debug.Log("picked");
-        this.coinSet.Remove(coin.index);
+        this.occupySet.Remove(coin.index);
         addRandomBlock();
     }
 
@@ -116,12 +119,12 @@ public class MapController : MonoBehaviour
 
     private void generateCoin()
     {
-        if (this.blockDict.Keys.Count - this.coinSet.Count > 0)
+        if (this.blockDict.Keys.Count - this.occupySet.Count > 0)
         {
             Random random = new Random();
-            Vector2Int selectBlockPos = new HashSet<Vector2Int>(this.blockDict.Keys).Except(this.coinSet).ToArray()[random.Next(0, this.blockDict.Keys.Count - this.coinSet.Count)];
+            Vector2Int selectBlockPos = new HashSet<Vector2Int>(this.blockDict.Keys).Except(this.occupySet).ToArray()[random.Next(0, this.blockDict.Keys.Count - this.occupySet.Count)];
             this.blockDict[selectBlockPos].GetComponent<Block>().generateCoin((float)random.NextDouble(), selectBlockPos);
-            this.coinSet.Add(selectBlockPos);
+            this.occupySet.Add(selectBlockPos);
         }
     }
 
@@ -140,6 +143,8 @@ public class MapController : MonoBehaviour
                         break;
                     case "Pet":
                         hitObject.SetActive(false);
+                        this.occupySet.Remove(hitObject.GetComponent<PetController>().index);
+                        this.catchedCountText.text = (int.Parse(this.catchedCountText.text) + 1).ToString();
                         break;
                     default:
                         break;
@@ -155,7 +160,52 @@ public class MapController : MonoBehaviour
         OnPickedUp(coin);
     }
 
-    private void checkAndGeneratePet() { 
-    
+    private void checkAndGeneratePet()
+    {
+        HashSet<Vector2Int> availablePetSet = new HashSet<Vector2Int>();
+        foreach (Vector2Int index in this.blockDict.Keys)
+        {
+            if (this.blockDict[index].tag == "SpecialBlock")
+            {
+                List<Vector2Int> surrondings = new List<Vector2Int>() {
+                    index + new Vector2Int(0, 1),
+                    index + new Vector2Int(0, -1),
+                    index + new Vector2Int(-1, 0),
+                    index + new Vector2Int(1, 0)
+                };
+                foreach (Vector2Int surronding in surrondings)
+                {
+                    if (this.blockDict.ContainsKey(surronding) && this.blockDict[surronding].tag == "SpecialBlock")
+                    {
+                        if (!this.occupySet.Contains(index))
+                        {
+                            availablePetSet.Add(index);
+                        }
+                        if (!this.occupySet.Contains(index))
+                        {
+                            availablePetSet.Add(surronding);
+                        }
+                    }
+                }
+            }
+        }
+        if (availablePetSet.Count == 0)
+        {
+            StartCoroutine(generatePets(5.0f, Vector2Int.zero, false));
+            return;
+        }
+        Vector2Int selected = availablePetSet.ToArray()[UnityEngine.Random.Range(0, availablePetSet.Count)];
+        occupySet.Add(selected);
+        StartCoroutine(generatePets(5.0f, selected));
+    }
+
+    private IEnumerator generatePets(float delayTime, Vector2Int pos, bool isGenerating = true)
+    {
+        yield return new WaitForSeconds(delayTime);
+        if (isGenerating)
+        {
+            this.blockDict[pos].GetComponent<Block>().generatePet(pos); 
+        }
+        checkAndGeneratePet();
     }
 }

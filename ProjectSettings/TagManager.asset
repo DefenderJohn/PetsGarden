@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Coin
   - Pet
+  - SpecialBlock
+  - RegularBlock
   layers:
   - Default
   - TransparentFX
